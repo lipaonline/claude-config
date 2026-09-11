@@ -1,0 +1,226 @@
+{
+ "side_label": "THOMAS BERTON · CLAUDE CODE + SHOPIFY · RECUT BY MARTY",
+ "t0": {
+  "ghost": "FAKE",
+  "slate": "THOMAS BERTON · YOUTUBE",
+  "l1": "UN SITE",
+  "l2": "À 15 000 €."
+ },
+ "kickers": [
+  {
+   "ghost": "SCROLL",
+   "l1": "LA PREUVE",
+   "l2": "EN LIVE."
+  },
+  {
+   "ghost": "SHOPIFY",
+   "l1": "UNE PHOTO.",
+   "l2": "UNE BOUTIQUE."
+  }
+ ],
+ "outro": {
+  "handle": "Thomas Berton · YouTube",
+  "credits": "recut by Marty · Claude Code + Shopify"
+ },
+ "clips": [
+  {
+   "file": "clipA.mp4",
+   "src_start": 0.06,
+   "duration": 22.8,
+   "ghost": "FAKE",
+   "slate": "SCÈNE 01 · LE FAUX BALENCIAGA",
+   "tag": "ANIMATIONS AU SCROLL · 15 000 €",
+   "quote_l1": "\"FAUX. FAIT EN",
+   "quote_l2": "10 MINUTES.\"",
+   "quote_at": 14.08,
+   "cues": [
+    {
+     "start": 0.21,
+     "end": 2.01,
+     "text": "Regarde-moi ce nouveau site de Balenciaga,"
+    },
+    {
+     "start": 2.05,
+     "end": 3.55,
+     "text": "il est juste incroyable."
+    },
+    {
+     "start": 3.59,
+     "end": 6.01,
+     "text": "Les animations au scroll sont magnifiques."
+    },
+    {
+     "start": 6.03,
+     "end": 7.65,
+     "text": "C'est fluide, classe, fashion."
+    },
+    {
+     "start": 7.71,
+     "end": 8.71,
+     "text": "Bref, il y a rien à dire."
+    },
+    {
+     "start": 8.73,
+     "end": 10.55,
+     "text": "C'est ce genre de site qui, sur le marché,"
+    },
+    {
+     "start": 10.62,
+     "end": 11.86,
+     "text": "peut valoir dans les 15 000 €."
+    },
+    {
+     "start": 11.91,
+     "end": 12.54,
+     "text": "OK, stop."
+    },
+    {
+     "start": 12.6,
+     "end": 14.06,
+     "text": "La vérité, c'est que ce site-là,"
+    },
+    {
+     "start": 14.08,
+     "end": 15.92,
+     "text": "c'est pas le site de Balenciaga."
+    },
+    {
+     "start": 15.94,
+     "end": 17.18,
+     "text": "C'est un site que je viens de faire"
+    },
+    {
+     "start": 17.22,
+     "end": 18.9,
+     "text": "avec Claude Code en 10 minutes,"
+    },
+    {
+     "start": 18.94,
+     "end": 19.84,
+     "text": "grâce à une technique"
+    },
+    {
+     "start": 19.88,
+     "end": 20.84,
+     "text": "que je viens de mettre au point"
+    },
+    {
+     "start": 20.86,
+     "end": 22.8,
+     "text": "que je vais te révéler dans cette vidéo."
+    }
+   ]
+  },
+  {
+   "file": "clipB.mp4",
+   "src_start": 1263.31,
+   "duration": 11.76,
+   "ghost": "WOUH",
+   "slate": "SCÈNE 02 · LA DÉMO CASIO",
+   "tag": "SITE GÉNÉRÉ · PREMIER SCROLL",
+   "quote_l1": "\"WOUH.",
+   "quote_l2": "CHAQUE PIÈCE COMPTE.\"",
+   "quote_at": 1266.04,
+   "cues": [
+    {
+     "start": 1263.41,
+     "end": 1266.0,
+     "text": "Regardons maintenant au scroll."
+    },
+    {
+     "start": 1266.04,
+     "end": 1267.74,
+     "text": "Wouh ! Honnêtement !"
+    },
+    {
+     "start": 1267.8,
+     "end": 1269.58,
+     "text": "Ah ouais !"
+    },
+    {
+     "start": 1269.62,
+     "end": 1271.36,
+     "text": "Et en plus là, il fait apparaître du coup"
+    },
+    {
+     "start": 1271.38,
+     "end": 1273.3,
+     "text": "les différentes montres."
+    },
+    {
+     "start": 1273.34,
+     "end": 1274.98,
+     "text": "Chaque pièce compte."
+    }
+   ]
+  },
+  {
+   "file": "clipC.mp4",
+   "src_start": 1701.75,
+   "duration": 15.83,
+   "ghost": "SHOPIFY",
+   "slate": "SCÈNE 03 · LE RÉCAP",
+   "tag": "PHOTO → VIDÉO → SITE → SHOPIFY",
+   "quote_l1": "UN SITE EN UN",
+   "quote_l2": "CLAQUEMENT DE DOIGTS.",
+   "quote_at": 1712.95,
+   "cues": [
+    {
+     "start": 1701.85,
+     "end": 1702.75,
+     "text": "J'ai envoyé ça à Claude"
+    },
+    {
+     "start": 1702.79,
+     "end": 1704.39,
+     "text": "et avec le skill que je vous ai donné,"
+    },
+    {
+     "start": 1704.45,
+     "end": 1705.43,
+     "text": "il a été capable de créer"
+    },
+    {
+     "start": 1705.47,
+     "end": 1707.25,
+     "text": "une photo professionnelle de départ,"
+    },
+    {
+     "start": 1707.29,
+     "end": 1708.99,
+     "text": "une photo professionnelle d'arrivée,"
+    },
+    {
+     "start": 1709.03,
+     "end": 1710.25,
+     "text": "la vidéo qui lie les deux."
+    },
+    {
+     "start": 1710.31,
+     "end": 1711.15,
+     "text": "Ensuite, il a été capable"
+    },
+    {
+     "start": 1711.17,
+     "end": 1712.91,
+     "text": "de se servir de cette vidéo comme base"
+    },
+    {
+     "start": 1712.95,
+     "end": 1713.95,
+     "text": "pour créer un site"
+    },
+    {
+     "start": 1714.02,
+     "end": 1714.99,
+     "text": "en un claquement de doigts."
+    },
+    {
+     "start": 1715.04,
+     "end": 1717.47,
+     "text": "Et en plus, on a mis ça sur Shopify, en ligne."
+    }
+   ]
+  }
+ ]
+}

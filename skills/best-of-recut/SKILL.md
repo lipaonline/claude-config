@@ -51,8 +51,26 @@ yt-dlp --skip-download --write-auto-subs --write-subs --sub-lang <lang> --sub-fo
   -o "source/<slug>" "<url>"
 ```
 
-Le json3 donne un `tOffsetMs` par mot : c'est ce qui permet de couper proprement. **Ne pas
-retranscrire avec Whisper** si le json3 existe.
+Si YouTube renvoie `HTTP Error 429` sur les sous-titres, ajouter
+`--extractor-args "youtube:player_client=android"` (ça débloque aussi la vidéo). Prendre la piste
+`<lang>-orig` quand elle existe : `fr` seul peut être une traduction automatique.
+
+Le json3 donne normalement un `tOffsetMs` par mot : c'est ce qui permet de couper proprement.
+**Ne pas retranscrire avec Whisper** si ces timings au mot existent.
+
+**Fallback si le json3 n'a pas de timings au mot** (segs sans `tOffsetMs`, blocs de ~3 s,
+typiquement sur une vidéo dont l'auteur a uploadé sa propre piste) : choisir les moments sur les
+blocs (le script sort quand même un listing horodaté exploitable), puis extraire l'audio des
+seules zones candidates (±3 s) et les passer dans whisperx pour obtenir le mot à mot :
+
+```bash
+ffmpeg -y -ss <t0> -to <t1> -i source/<slug>.mp4 -vn -ac 1 -ar 16000 zoneA.wav
+~/dev/1440o/scripts/clip-machine/.venv/bin/whisperx zoneA.wav --model large-v3-turbo \
+  --language fr --device cpu --compute_type int8 --output_format json --output_dir .
+```
+
+Ajouter l'offset `t0` à chaque mot. 30 s d'audio prennent ~15 s sur CPU. Whisperx entend mal les
+chiffres (« 15 000 € » → « 15 millions ») : reprendre le texte depuis la piste YouTube.
 
 ```bash
 python3 <SKILL_DIR>/scripts/json3_to_words.py source/<slug>.<lang>.json3 > source/<slug>.words.json
@@ -82,26 +100,39 @@ bash <SKILL_DIR>/scripts/cut_clip.sh source/<slug>.mp4 <start> <end> build/<name
 
 Le script :
 - ajoute **0,15 s avant le premier mot** et **0,35 s après le dernier** (`PAD_IN` / `PAD_OUT`) ;
-- applique `afade in 0.15 s` et `afade out 0.30 s` ;
+- applique `afade in 0.15 s` et `afade out 0.30 s` (`FADE_IN` / `FADE_OUT`) ;
 - ré-encode (libx264 crf 18, aac 192k) pour des coupes à l'image près ;
 - imprime le niveau `volumedetect` des 300 premières et dernières millisecondes. **Cible :
   mean_volume ≤ −40 dB en queue.** Si c'est plus fort, un mot est coupé : reculer `end` sur la
   fin de phrase précédente ou augmenter `PAD_OUT`. La tête est masquée par le fade-in, elle
   peut être plus forte.
 
+Orateur qui enchaîne sans pause (gap < 0,1 s entre la fin de phrase et le mot suivant) : scanner
+l'énergie par tranches de 40 ms autour du point de coupe (`ffmpeg -ss t -t 0.04 -af volumedetect`)
+pour trouver le vrai creux, puis couper dedans avec `PAD_OUT=0.05 FADE_OUT=0.10`. Contrôler alors
+les **80 dernières ms** (≤ −45 dB) plutôt que les 300 dernières, qui contiennent la fin du mot.
+
 Les coupes sèches en milieu de mot ont été explicitement rejetées par l'utilisateur.
 
 ### 4. Écrire la composition
 
-Copier `references/composition-template.html` vers `build/<name>/index.html` et remplacer :
+Écrire `build/<name>/storyboard.json` (schéma en tête de `scripts/compose.py`, exemple complet
+dans `references/storyboard-example.json`) puis générer :
 
-| Placeholder | Valeur |
-|---|---|
-| `__TOTAL__` | durée totale = 1.4 (title) + Σ clips + 1.2 × kickers + 3.0 (outro) |
-| `__SIDE_LABEL__` | libellé vertical gauche (marque · sujet · RECUT BY …) |
-| `__T0_*__`, `__K*_*__`, `__O_*__` | textes title card, kickers, outro |
-| `__A_START__`, `__A_DUR__`… | placement des clips sur la timeline |
-| `CUES` | captions phrase par phrase, timings = `sentence.start − src_start + clip_start` |
+```bash
+python3 <SKILL_DIR>/scripts/compose.py build/<name>/storyboard.json build/<name>/index.html
+```
+
+Le générateur remplit `references/composition-template.html`, calcule la timeline (title 1.4 s →
+clip → kicker 1.2 s → … → outro 3 s), convertit tous les timings source en timings composition
+(`offset = clip_start − src_start`, où `src_start` est le début *du fichier coupé* dans la source,
+donc `mot_start − PAD_IN`) et réécrit les entrées GSAP. 2 ou 3 clips.
+
+Contraintes de texte (police 96-122 px, `nowrap` sur les captions) :
+- pull-quote : **≤ 15 caractères par ligne**, sinon elle passe sur 3-4 lignes ;
+- kickers / title card : ≤ 12 caractères par ligne ;
+- captions : **≤ 45 caractères**, une phrase ou un bout de phrase par cue, texte fidèle à la parole ;
+- `outro.handle` sans flèche, le template l'ajoute.
 
 Timeline type (3 scènes) :
 
@@ -140,6 +171,9 @@ done
 
 Contrôler : captions lisibles et jamais sur deux lignes, vidéo bien dans son cadre, aucun
 texte qui déborde, pas de noir en queue (durée totale ≤ somme réelle).
+
+Frames de contrôle en planche contact : `ffmpeg … -filter_complex xstack=inputs=N` sur des
+vignettes 360 px, puis les regarder.
 
 ### 6. Livrer
 
