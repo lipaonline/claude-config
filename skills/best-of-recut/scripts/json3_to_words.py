@@ -11,6 +11,7 @@ import re
 import sys
 
 TERMINAL = re.compile(r"[.!?…]['\"»)]*$")
+TAG = re.compile(r"^\[.*\]$")  # [musique], [Music], [Applause]…
 
 
 def load_words(path):
