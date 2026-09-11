@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #17130e;
+      }
+      :root {
+        --bg: #17130e;
+        --fg: #f2ead9;
+        --accent: #f2a33c;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Inter", sans-serif;
+      }
+      body {
+        font-family: var(--sans);
+        color: var(--fg);
+      }
+
+      /* ---------- persistent film-set chrome ---------- */
+      .bg-glow {
+        position: absolute;
+        top: -10%;
+        left: -25%;
+        width: 130%;
+        height: 70%;
+        background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%);
+      }
+      .bg-glow-2 {
+        position: absolute;
+        bottom: -15%;
+        right: -30%;
+        width: 110%;
+        height: 55%;
+        background: radial-gradient(closest-side, rgba(242, 234, 217, 0.07), transparent 70%);
+      }
+      .frame-mark {
+        position: absolute;
+        width: 56px;
+        height: 56px;
+        border: 3px solid rgba(242, 234, 217, 0.28);
+      }
+      .fm-tl { top: 48px; left: 48px; border-right: 0; border-bottom: 0; }
+      .fm-tr { top: 48px; right: 48px; border-left: 0; border-bottom: 0; }
+      .fm-bl { bottom: 48px; left: 48px; border-right: 0; border-top: 0; }
+      .fm-br { bottom: 48px; right: 48px; border-left: 0; border-top: 0; }
+      .side-label {
+        position: absolute;
+        left: 60px;
+        top: 50%;
+        transform: translateY(-50%) rotate(180deg);
+        writing-mode: vertical-rl;
+        font-family: var(--mono);
+        font-size: 21px;
+        letter-spacing: 0.35em;
+        color: rgba(242, 234, 217, 0.55);
+        white-space: nowrap;
+      }
+      .timecode {
+        position: absolute;
+        top: 58px;
+        right: 130px;
+        font-family: var(--mono);
+        font-size: 26px;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+      }
+      .rec-dot {
+        position: absolute;
+        top: 66px;
+        right: 92px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      /* ---------- cards ---------- */
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .scene-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 140px 110px;
+        gap: 28px;
+      }
+      .ghost {
+        position: absolute;
+        top: 46%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-8deg);
+      }
+      .ghost::before {
+        content: attr(data-word);
+        font-family: var(--sans);
+        font-weight: 900;
+        font-size: 380px;
+        letter-spacing: -0.04em;
+        color: rgba(242, 234, 217, 0.055);
+        white-space: nowrap;
+      }
+      .slate {
+        align-self: flex-start;
+        transform-origin: left center;
+        font-family: var(--mono);
+        font-size: 24px;
+        letter-spacing: 0.22em;
+        color: var(--fg);
+        border: 2px solid color-mix(in srgb, var(--accent) 75%, transparent);
+        padding: 16px 26px;
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+      }
+      .card-line {
+        font-weight: 900;
+        font-size: 122px;
+        line-height: 1.02;
+        letter-spacing: -0.025em;
+      }
+      .accent-line {
+        color: var(--accent);
+      }
+      .cta-chip {
+        margin-top: 40px;
+        align-self: flex-start;
+        font-family: var(--mono);
+        font-size: 34px;
+        letter-spacing: 0.06em;
+        color: var(--bg);
+        background: var(--accent);
+        padding: 26px 40px;
+        font-weight: 700;
+      }
+      .credits {
+        margin-top: 36px;
+        font-family: var(--mono);
+        font-size: 24px;
+        letter-spacing: 0.08em;
+        color: rgba(242, 234, 217, 0.62);
+      }
+
+      /* ---------- video panels ---------- */
+      .clip-video {
+        position: absolute;
+        top: 430px;
+        left: 120px;
+        width: 900px;
+        border-radius: 22px;
+        border: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+        background: #000;
+      }
+      .clip-deco .slate {
+        position: absolute;
+        top: 330px;
+        left: 120px;
+        align-self: unset;
+      }
+      .clip-deco .demo-tag {
+        position: absolute;
+        top: 1020px;
+        left: 120px;
+        font-family: var(--mono);
+        font-size: 26px;
+        letter-spacing: 0.18em;
+        color: #ffc46b;
+      }
+      .clip-deco .big-word {
+        position: absolute;
+        top: 1110px;
+        left: 120px;
+        right: 70px;
+        font-weight: 900;
+        font-size: 96px;
+        line-height: 1.04;
+        letter-spacing: -0.025em;
+      }
+      .clip-deco .big-word em {
+        font-style: normal;
+        color: var(--accent);
+      }
+
+      /* captions */
+      .caption {
+        position: absolute;
+        bottom: 250px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+        font-family: var(--mono);
+        font-size: 31px;
+        line-height: 1.4;
+        text-align: center;
+        color: var(--fg);
+        background: rgba(23, 19, 14, 0.84);
+        border-left: 5px solid var(--accent);
+        padding: 16px 28px;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="__TOTAL__"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- persistent chrome -->
+      <div id="bg" class="clip" data-start="0" data-duration="__TOTAL__" data-track-index="0" style="position: absolute; inset: 0">
+        <div class="bg-glow"></div>
+        <div class="bg-glow-2"></div>
+        <div class="frame-mark fm-tl"></div>
+        <div class="frame-mark fm-tr"></div>
+        <div class="frame-mark fm-bl"></div>
+        <div class="frame-mark fm-br"></div>
+        <div class="side-label" data-layout-allow-overlap>__SIDE_LABEL__</div>
+        <div class="timecode" id="timecode">TC 00:00:00:00</div>
+        <div class="rec-dot" id="rec-dot"></div>
+      </div>
+
+      <!-- T0 · title card (0 – 1.4) -->
+      <div id="t0" class="clip scene" data-start="0" data-duration="1.4" data-track-index="1">
+        <div class="ghost" data-word="__T0_GHOST__" data-layout-ignore></div>
+        <div class="scene-content">
+          <div class="slate" data-layout-allow-overflow id="t0-slate">__T0_SLATE__</div>
+          <div class="card-line" id="t0-l1">__T0_L1__</div>
+          <div class="card-line accent-line" id="t0-l2">__T0_L2__</div>
+        </div>
+      </div>
+
+      <!-- K1 · kicker -->
+      <div id="k1" class="clip scene" data-start="__K1_START__" data-duration="1.2" data-track-index="1">
+        <div class="ghost" data-word="__K1_GHOST__" data-layout-ignore></div>
+        <div class="scene-content">
+          <div class="card-line" id="k1-l1">__K1_L1__</div>
+          <div class="card-line accent-line" id="k1-l2">__K1_L2__</div>
+        </div>
+      </div>
+
+      <!-- K2 · kicker -->
+      <div id="k2" class="clip scene" data-start="__K2_START__" data-duration="1.2" data-track-index="1">
+        <div class="ghost" data-word="__K2_GHOST__" data-layout-ignore></div>
+        <div class="scene-content">
+          <div class="card-line" id="k2-l1">__K2_L1__</div>
+          <div class="card-line accent-line" id="k2-l2">__K2_L2__</div>
+        </div>
+      </div>
+
+      <!-- outro (3.0 s) -->
+      <div id="outro" class="clip scene" data-start="__O_START__" data-duration="3" data-track-index="1">
+        <div class="ghost" data-word="FIN" data-layout-ignore></div>
+        <div class="scene-content" id="outro-content">
+          <div class="slate" data-layout-allow-overflow id="o-slate">LA SUITE</div>
+          <div class="card-line" id="o-l1">FULL VIDEO</div>
+          <div class="card-line accent-line" id="o-l2">ON YOUTUBE.</div>
+          <div class="cta-chip" id="o-chip">→ __O_HANDLE__</div>
+          <div class="credits" id="o-credits">__O_CREDITS__</div>
+        </div>
+      </div>
+
+      <!-- per-clip decorations -->
+      <div id="decoA" class="clip clip-deco" data-start="1.4" data-duration="__A_DUR__" data-track-index="5" style="position: absolute; inset: 0">
+        <div class="ghost" data-word="__A_GHOST__" data-layout-ignore></div>
+        <div class="slate" data-layout-allow-overflow>__A_SLATE__</div>
+        <div class="demo-tag" id="tagA">__A_TAG__</div>
+        <div class="big-word" id="wordA">__A_QUOTE_L1__<br /><em>__A_QUOTE_L2__</em></div>
+      </div>
+      <div id="decoB" class="clip clip-deco" data-start="__B_START__" data-duration="__B_DUR__" data-track-index="5" style="position: absolute; inset: 0">
+        <div class="ghost" data-word="__B_GHOST__" data-layout-ignore></div>
+        <div class="slate" data-layout-allow-overflow>__B_SLATE__</div>
+        <div class="demo-tag" id="tagB">__B_TAG__</div>
+        <div class="big-word" id="wordB">__B_QUOTE_L1__<br /><em>__B_QUOTE_L2__</em></div>
+      </div>
+      <div id="decoC" class="clip clip-deco" data-start="__C_START__" data-duration="__C_DUR__" data-track-index="5" style="position: absolute; inset: 0">
+        <div class="ghost" data-word="__C_GHOST__" data-layout-ignore></div>
+        <div class="slate" data-layout-allow-overflow>__C_SLATE__</div>
+        <div class="demo-tag" id="tagC">__C_TAG__</div>
+        <div class="big-word" id="wordC">__C_QUOTE_L1__<br /><em>__C_QUOTE_L2__</em></div>
+      </div>
+
+      <!-- real footage -->
+      <video id="vA" class="clip clip-video" data-start="1.4" data-duration="__A_DUR__" data-track-index="6" src="clipA.mp4" muted playsinline></video>
+      <video id="vB" class="clip clip-video" data-start="__B_START__" data-duration="__B_DUR__" data-track-index="6" src="clipB.mp4" muted playsinline></video>
+      <video id="vC" class="clip clip-video" data-start="__C_START__" data-duration="__C_DUR__" data-track-index="6" src="clipC.mp4" muted playsinline></video>
+      <audio id="aA" class="clip" data-start="1.4" data-duration="__A_DUR__" data-track-index="7" src="clipA.mp4" data-volume="1"></audio>
+      <audio id="aB" class="clip" data-start="__B_START__" data-duration="__B_DUR__" data-track-index="7" src="clipB.mp4" data-volume="1"></audio>
+      <audio id="aC" class="clip" data-start="__C_START__" data-duration="__C_DUR__" data-track-index="7" src="clipC.mp4" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      // ---- captions: real speech, word-level timings from YouTube auto-sub track ----
+      const CUES = [
+        // one cue per sentence. t = sentence.start - src_start + clip_start_on_timeline
+        // __CUES__
+      ];
+      /* example (jarvis):
+        // clip A (src 0.0 → comp +1.4)
+        { t: 2.32, end: 4.0, text: "Quand quelqu'un a faim à midi," },
+        { t: 4.0, end: 6.28, text: "il ne va pas sur votre site internet." },
+        { t: 6.28, end: 8.52, text: "Il ne cherche même pas votre nom." },
+        { t: 8.52, end: 10.68, text: "Il sort son téléphone et il tape" },
+        { t: 10.68, end: 13.12, text: "« restaurant » + le nom de sa ville." },
+        { t: 13.12, end: 15.8, text: "Et là, tout se joue en 3 secondes" },
+        { t: 15.8, end: 19.2, text: "sur une seule chose : votre fiche Google." },
+        // clip B (src 140.7 → comp +20.4 ⇒ offset -120.3)
+        { t: 20.7, end: 23.98, text: "Voilà ce qu'on a construit : Plat du jour." },
+        { t: 23.98, end: 26.78, text: "Chaque matin, une photo de votre plat." },
+        { t: 26.78, end: 30.6, text: "Envoyée sur WhatsApp, comme à un ami." },
+        { t: 30.7, end: 33.0, text: "C'est tout. 30 secondes." },
+        // clip C (src 264.1 → comp +34.2 ⇒ offset -229.9)
+        { t: 34.54, end: 35.62, text: "Récapitulons." },
+        { t: 35.62, end: 38.54, text: "Une photo WhatsApp par jour. 30 secondes." },
+        { t: 38.54, end: 41.74, text: "Et votre fiche Google, votre vitrine n°1," },
+        { t: 41.74, end: 44.1, text: "devient la plus vivante de votre rue." },
+      */
+      const root = document.getElementById("root");
+      CUES.forEach((c, i) => {
+        const el = document.createElement("div");
+        el.className = "clip caption";
+        el.id = "cue-" + i;
+        el.dataset.start = String(c.t);
+        el.dataset.duration = String(Math.max(0.3, c.end - c.t));
+        el.dataset.trackIndex = "3";
+        el.textContent = c.text;
+        root.appendChild(el);
+      });
+
+      const tl = gsap.timeline({ paused: true });
+      // NOTE: every absolute time below (kickers, videos, decos, outro) must be recomputed
+      // from the timeline you built in SKILL.md step 4. The numbers left here are the jarvis example.
+
+      CUES.forEach((c, i) => {
+        tl.fromTo(
+          "#cue-" + i,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" },
+          c.t
+        );
+      });
+
+      // ---- persistent chrome ----
+      tl.fromTo(".bg-glow", { scale: 1 }, { scale: 1.06, duration: 2.5, ease: "sine.inOut", yoyo: true, repeat: __GLOW_REPEAT__ }, 0);
+      tl.fromTo("#rec-dot", { opacity: 1 }, { opacity: 0.25, duration: 0.75, ease: "sine.inOut", yoyo: true, repeat: __DOT_REPEAT__ }, 0);
+      const tc = { t: 0 };
+      const tcEl = document.getElementById("timecode");
+      tl.to(
+        tc,
+        {
+          t: __TOTAL__,
+          duration: __TOTAL__,
+          ease: "none",
+          onUpdate() {
+            const total = Math.floor(tc.t * 30);
+            const f = String(total % 30).padStart(2, "0");
+            const s = String(Math.floor(total / 30) % 60).padStart(2, "0");
+            tcEl.textContent = "TC 00:00:" + s + ":" + f;
+          },
+        },
+        0
+      );
+
+      // ---- T0 title card: fast stamp, hard cut out ----
+      tl.fromTo("#t0-slate", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: "power4.out" }, 0.1);
+      tl.fromTo("#t0-l1", { x: -90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "expo.out" }, 0.2);
+      tl.fromTo("#t0-l2", { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "power4.out" }, 0.45);
+
+      // ---- kickers: percussive stamps, hard cuts ----
+      tl.fromTo("#k1-l1", { x: -90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "expo.out" }, 19.25);
+      tl.fromTo("#k1-l2", { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.32, ease: "power4.out" }, 19.45);
+      tl.fromTo("#k2-l1", { x: -90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "expo.out" }, 33.05);
+      tl.fromTo("#k2-l2", { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.32, ease: "power4.out" }, 33.25);
+
+      // ---- video entrances ----
+      tl.fromTo("#vA", { scale: 0.96, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 1.4);
+      tl.fromTo("#vB", { scale: 0.96, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 20.4);
+      tl.fromTo("#vC", { scale: 0.96, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 34.2);
+
+      // ---- per-clip deco entrances ----
+      tl.fromTo("#decoA .slate", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.out" }, 1.55);
+      tl.fromTo("#tagA", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 1.8);
+      tl.fromTo("#wordA", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 13.2);
+      tl.fromTo("#decoB .slate", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.out" }, 20.55);
+      tl.fromTo("#tagB", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 20.8);
+      tl.fromTo("#wordB", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 30.7);
+      tl.fromTo("#decoC .slate", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.out" }, 34.35);
+      tl.fromTo("#tagC", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 34.6);
+      tl.fromTo("#wordC", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 41.8);
+
+      // ---- outro ----
+      tl.fromTo("#o-slate", { scale: 1.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power4.out" }, 44.2);
+      tl.fromTo("#o-l1", { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, 44.35);
+      tl.fromTo("#o-l2", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 44.55);
+      tl.fromTo("#o-chip", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, 44.9);
+      tl.fromTo("#o-credits", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power1.out" }, 45.3);
+      // final fade
+      tl.to("#outro-content", { opacity: 0, duration: 0.5, ease: "power1.in" }, 46.5);
+      tl.to("#bg", { opacity: 0, duration: 0.4, ease: "power1.in" }, 46.6);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
