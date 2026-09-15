@@ -1,0 +1,14 @@
+{
+  "format": "instagram",
+  "theme": { "preset": "dark", "handle": "@yourhandle" },
+  "slides": [
+    { "type": "cover", "kicker": "Carousel playbook", "title": "7 hooks that stop the **scroll**", "sub": "Steal these for your next LinkedIn or Instagram carousel." },
+    { "type": "point", "n": 1, "title": "The contrarian", "body": "“Everyone says post daily. I posted 3 times a month and grew faster.” Tension makes people swipe." },
+    { "type": "point", "n": 2, "title": "The number", "body": "“7 mistakes”, “3 templates”, “48 hours”. A number promises a finite, scannable payoff." },
+    { "type": "point", "n": 3, "title": "The mistake", "body": "“You’re using carousels wrong.” Loss aversion beats curiosity." },
+    { "type": "stat", "kicker": "Why it matters", "value": "1.9×", "label": "more reach for carousels than **single images** on Instagram", "body": "Source: Socialinsider, 2024." },
+    { "type": "list", "kicker": "Checklist", "title": "Before you post", "checks": true, "items": ["One idea per slide", "Cover readable at thumbnail size", "Last slide asks for **one** action"] },
+    { "type": "quote", "text": "People don’t read carousels. They swipe until something makes them stop.", "author": "Every growth lead, ever" },
+    { "type": "cta", "title": "Save this for your next post", "body": "Follow for one carousel breakdown a week.", "button": "Follow @yourhandle" }
+  ]
+}
